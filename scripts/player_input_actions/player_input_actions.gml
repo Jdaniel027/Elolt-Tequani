@@ -94,6 +94,29 @@ function player_start_actions() {
         dash_timer = dash_duration;
         dash_trail_timer = 0;
         dash_cooldown = dash_cooldown_max;
+		
+		// Crear un único efecto de fuego
+var fire_trail = instance_create_depth(
+    x - dash_direction * 70,
+    y,
+    depth + 2,
+    obj_dash_fire_trail
+);
+
+fire_trail.player_owner = id;
+fire_trail.follow_direction = dash_direction;
+
+if (dash_direction == 1) {
+    fire_trail.sprite_index =
+        spr_player_dash_fire_right;
+}
+else {
+    fire_trail.sprite_index =
+        spr_player_dash_fire_left;
+}
+
+fire_trail.image_index = 0;
+fire_trail.image_speed = 0.6;
 
         vertical_speed = 0;
 

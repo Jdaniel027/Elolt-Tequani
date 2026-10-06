@@ -84,6 +84,8 @@ function player_update_movement() {
             trail.trail_xscale = image_xscale;
             trail.trail_yscale = image_yscale;
             trail.trail_angle = image_angle;
+			
+			
 
             dash_trail_timer = dash_trail_interval;
         }

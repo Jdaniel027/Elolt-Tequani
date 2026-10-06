@@ -1,17 +1,26 @@
 // ==================================================
-// MOVIMIENTO DE LA GRANADA
+// GRANADA SIN EXPLOTAR
 // ==================================================
 
 if (!exploded) {
+
+    // Guardar posición anterior para detectar impactos
+    var previous_x = x;
+    var previous_y = y;
+
+    // ==================================================
+    // MOVIMIENTO
+    // ==================================================
 
     if (!landed) {
 
         // Gravedad
         vertical_speed += gravity_force;
 
-        // ------------------------------------------
-        // Movimiento horizontal
-        // ------------------------------------------
+
+        // ----------------------------------------------
+        // MOVIMIENTO HORIZONTAL
+        // ----------------------------------------------
 
         var next_x = x + horizontal_speed;
 
@@ -36,9 +45,10 @@ if (!exploded) {
             horizontal_speed *= -0.5;
         }
 
-        // ------------------------------------------
-        // Movimiento vertical
-        // ------------------------------------------
+
+        // ----------------------------------------------
+        // MOVIMIENTO VERTICAL
+        // ----------------------------------------------
 
         var next_y = y + vertical_speed;
 
@@ -78,7 +88,9 @@ if (!exploded) {
 
             if (bounce_count <= max_bounces) {
 
-                vertical_speed = -abs(vertical_speed) * 0.55;
+                vertical_speed =
+                    -abs(vertical_speed) * 0.55;
+
                 horizontal_speed *= 0.80;
 
             }
@@ -96,23 +108,65 @@ if (!exploded) {
         }
     }
 
-    // ----------------------------------------------
+
+    // ==================================================
+    // DETECTAR IMPACTO CON ENEMIGO
+    // ==================================================
+
+    var impact_enemy = collision_line(
+        previous_x,
+        previous_y,
+        x,
+        y,
+        par_enemy,
+        false,
+        true
+    );
+
+    // Comprobar también el área actual por si está detenida
+    if (impact_enemy == noone) {
+
+        impact_enemy = collision_circle(
+            x,
+            y,
+            6,
+            par_enemy,
+            false,
+            true
+        );
+    }
+
+
+    // ==================================================
     // CUENTA REGRESIVA
-    // ----------------------------------------------
+    // ==================================================
 
     fuse_timer -= 1;
 
-    if (fuse_timer <= 0) {
+    var explode_by_impact =
+        impact_enemy != noone;
+
+    var explode_by_time =
+        fuse_timer <= 0;
+
+
+    // ==================================================
+    // INICIAR EXPLOSIÓN
+    // ==================================================
+
+    if (explode_by_impact || explode_by_time) {
 
         exploded = true;
         explosion_timer = explosion_duration;
 
         horizontal_speed = 0;
         vertical_speed = 0;
+        landed = true;
 
-        // ------------------------------------------
-        // BUSCAR ENEMIGOS DENTRO DE LA EXPLOSIÓN
-        // ------------------------------------------
+
+        // ----------------------------------------------
+        // BUSCAR ENEMIGOS EN EL RADIO
+        // ----------------------------------------------
 
         var enemy_list = ds_list_create();
 
@@ -132,18 +186,22 @@ if (!exploded) {
             i < ds_list_size(enemy_list);
             i++
         ) {
-            var enemy = ds_list_find_value(enemy_list, i);
+            var enemy =
+                ds_list_find_value(enemy_list, i);
 
+            // Cada enemigo recibe daño una sola vez
             enemy.hp -= damage;
             enemy.hit_flash_timer = 8;
 
-            var push_direction = sign(enemy.x - x);
+            var push_direction =
+                sign(enemy.x - x);
 
             if (push_direction == 0) {
                 push_direction = 1;
             }
 
-            enemy.knockback_speed = push_direction * 5;
+            enemy.knockback_speed =
+                push_direction * 5;
         }
 
         ds_list_destroy(enemy_list);
