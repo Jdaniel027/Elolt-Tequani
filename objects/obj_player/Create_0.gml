@@ -125,3 +125,6 @@ air_dash_available = true;
 
 dash_trail_timer = 0;
 dash_trail_interval = 2;
+
+// Monedas recogidas
+coins = 0;

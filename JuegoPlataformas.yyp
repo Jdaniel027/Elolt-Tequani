@@ -15,6 +15,7 @@
     {"$GMFolder":"","%Name":"Enemies","folderPath":"folders/Objects/Enemies.yy","name":"Enemies","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Parents","folderPath":"folders/Objects/Enemies/Parents.yy","name":"Parents","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Test","folderPath":"folders/Objects/Enemies/Test.yy","name":"Test","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Test","folderPath":"folders/Objects/Test.yy","name":"Test","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Player","folderPath":"folders/Objects/Player.yy","name":"Player","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Core","folderPath":"folders/Objects/Player/Core.yy","name":"Core","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Effects","folderPath":"folders/Objects/Player/Effects.yy","name":"Effects","resourceType":"GMFolder","resourceVersion":"2.0",},
@@ -45,6 +46,7 @@
   },
   "name":"JuegoPlataformas",
   "resources":[
+    {"id":{"name":"obj_coin","path":"objects/obj_coin/obj_coin.yy",},},
     {"id":{"name":"obj_corn_grenade","path":"objects/obj_corn_grenade/obj_corn_grenade.yy",},},
     {"id":{"name":"obj_corn_kernel_particle","path":"objects/obj_corn_kernel_particle/obj_corn_kernel_particle.yy",},},
     {"id":{"name":"obj_dash_fire_trail","path":"objects/obj_dash_fire_trail/obj_dash_fire_trail.yy",},},
@@ -65,6 +67,7 @@
     {"id":{"name":"player_states","path":"scripts/player_states/player_states.yy",},},
     {"id":{"name":"player_update_shield","path":"scripts/player_update_shield/player_update_shield.yy",},},
     {"id":{"name":"player_update_timers","path":"scripts/player_update_timers/player_update_timers.yy",},},
+    {"id":{"name":"spr_coin","path":"sprites/spr_coin/spr_coin.yy",},},
     {"id":{"name":"spr_player_attack_melee_left","path":"sprites/spr_player_attack_melee_left/spr_player_attack_melee_left.yy",},},
     {"id":{"name":"spr_player_attack_melee_right","path":"sprites/spr_player_attack_melee_right/spr_player_attack_melee_right.yy",},},
     {"id":{"name":"spr_player_attack_melee_up","path":"sprites/spr_player_attack_melee_up/spr_player_attack_melee_up.yy",},},

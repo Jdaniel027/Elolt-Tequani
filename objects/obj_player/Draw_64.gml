@@ -57,3 +57,10 @@ draw_rectangle(
 // Restaurar estado de dibujo
 draw_set_alpha(1);
 draw_set_color(c_white);
+
+// Contador de monedas
+draw_set_color(c_yellow);
+draw_text(20, 65, "Monedas: " + string(coins));
+
+// Restaurar color
+draw_set_color(c_white);
