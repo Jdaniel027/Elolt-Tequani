@@ -1,10 +1,69 @@
+// ==================================================
+// COLISIONES: OBJ_SOLID + TILEMAP "Hitbox"
+// ==================================================
+
+function player_meets_wall(_x, _y) {
+
+    // Mantener las colisiones con los bloques originales.
+    if (place_meeting(_x, _y, obj_solid)) {
+        return true;
+    }
+
+    // Buscar la capa de colisiones en la room actual.
+    if (layer_exists("Hitbox")) {
+
+        var _tilemap = layer_tilemap_get_id("Hitbox");
+
+        // Comprobar únicamente si existe un tilemap válido.
+        if (_tilemap != -1) {
+            return place_meeting(_x, _y, _tilemap);
+        }
+    }
+
+    return false;
+}
+
+
+// ==================================================
+// COMPROBAR SUELO
+// ==================================================
+
 function player_check_ground() {
 
-    on_ground = place_meeting(
-        x,
-        y + 1,
-        obj_solid
-    );
+    // Si está dentro de un sólido, buscar espacio hacia arriba.
+    if (player_meets_wall(x, y)) {
+
+        var _max_up = 256;
+        var _found_space = false;
+
+        for (var _offset = 1; _offset <= _max_up; _offset++) {
+
+            if (!player_meets_wall(x, y - _offset)) {
+
+                // Mover únicamente cuando encontramos un sitio libre.
+                y -= _offset;
+
+                vertical_speed = 0;
+
+                dash_active = false;
+                dash_timer = 0;
+
+                _found_space = true;
+                break;
+            }
+        }
+
+        // Avisar si no se encontró una salida.
+        if (!_found_space) {
+            show_debug_message(
+                "Jugador atrapado: no hay espacio libre "
+                + "en los 256 pixeles superiores."
+            );
+        }
+    }
+
+    // Comprobar el suelo después de corregir la posición.
+    on_ground = player_meets_wall(x, y + 1);
 
     if (on_ground) {
         air_dash_available = true;
@@ -12,9 +71,13 @@ function player_check_ground() {
 }
 
 
+// ==================================================
+// MOVIMIENTO, SALTO, DASH Y COLISIONES
+// ==================================================
+
 function player_update_movement() {
 
-    // Bloquear desplazamiento durante acciones
+    // Bloquear desplazamiento durante acciones.
     if (
         attacking
         || casting_fireball
@@ -38,20 +101,20 @@ function player_update_movement() {
         horizontal_speed = move * move_speed;
     }
 
-    // Colisión horizontal
+    // ==================================================
+    // COLISIÓN HORIZONTAL
+    // ==================================================
+
     if (
         horizontal_speed != 0
-        && place_meeting(
-            x + horizontal_speed,
-            y,
-            obj_solid
-        )
+        && player_meets_wall(x + horizontal_speed, y)
     ) {
-        while (!place_meeting(
-            x + sign(horizontal_speed),
-            y,
-            obj_solid
-        )) {
+        while (
+            !player_meets_wall(
+                x + sign(horizontal_speed),
+                y
+            )
+        ) {
             x += sign(horizontal_speed);
         }
 
@@ -65,13 +128,17 @@ function player_update_movement() {
 
     x += horizontal_speed;
 
-    // Actualizar dash y estela
+    // ==================================================
+    // ACTUALIZAR DASH Y ESTELA
+    // ==================================================
+
     if (dash_active) {
         dash_timer -= 1;
         vertical_speed = 0;
         dash_trail_timer -= 1;
 
         if (dash_trail_timer <= 0) {
+
             var trail = instance_create_depth(
                 x,
                 y,
@@ -84,8 +151,6 @@ function player_update_movement() {
             trail.trail_xscale = image_xscale;
             trail.trail_yscale = image_yscale;
             trail.trail_angle = image_angle;
-			
-			
 
             dash_trail_timer = dash_trail_interval;
         }
@@ -95,7 +160,10 @@ function player_update_movement() {
         }
     }
 
-    // Salto
+    // ==================================================
+    // SALTO
+    // ==================================================
+
     if (
         !attacking
         && !casting_fireball
@@ -109,10 +177,15 @@ function player_update_movement() {
         vertical_speed = jump_speed;
     }
 
-    // Gravedad
+    // ==================================================
+    // GRAVEDAD
+    // ==================================================
+
     if (!dash_active) {
+
         if (!on_ground) {
             vertical_speed += gravity_force;
+
             vertical_speed = min(
                 vertical_speed,
                 max_fall_speed
@@ -126,20 +199,20 @@ function player_update_movement() {
         vertical_speed = 0;
     }
 
-    // Colisión vertical
+    // ==================================================
+    // COLISIÓN VERTICAL
+    // ==================================================
+
     if (
         vertical_speed != 0
-        && place_meeting(
-            x,
-            y + vertical_speed,
-            obj_solid
-        )
+        && player_meets_wall(x, y + vertical_speed)
     ) {
-        while (!place_meeting(
-            x,
-            y + sign(vertical_speed),
-            obj_solid
-        )) {
+        while (
+            !player_meets_wall(
+                x,
+                y + sign(vertical_speed)
+            )
+        ) {
             y += sign(vertical_speed);
         }
 
@@ -148,9 +221,6 @@ function player_update_movement() {
 
     y += vertical_speed;
 
-    on_ground = place_meeting(
-        x,
-        y + 1,
-        obj_solid
-    );
+    // Actualizar suelo después de moverse.
+    on_ground = player_meets_wall(x, y + 1);
 }
