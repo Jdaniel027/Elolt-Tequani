@@ -4,7 +4,6 @@
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"eventNum":0,"eventType":4,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"Avispa",
@@ -13,7 +12,10 @@
     "name":"Avispa",
     "path":"folders/Objects/Enemies/Avispa.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"par_enemy",
+    "path":"objects/par_enemy/par_enemy.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
@@ -32,8 +34,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_Avispa_Left",
-    "path":"sprites/spr_Avispa_Left/spr_Avispa_Left.yy",
+    "name":"spr_avispa_fly",
+    "path":"sprites/spr_avispa_fly/spr_avispa_fly.yy",
   },
   "spriteMaskId":null,
   "visible":true,

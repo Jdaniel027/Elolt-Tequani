@@ -1,17 +1,44 @@
-// Si la avispa murió, no ejecutar su IA
-if (muerta) {
+// ==================================================
+// COMPROBAR MUERTE
+// ==================================================
+
+if (hp <= 0 || muerta) {
+    muerta = true;
+    instance_destroy();
     exit;
 }
 
-// Controlar el tiempo entre ataques
-if (!puede_atacar) {
-    tiempo_entre_ataques--;
 
-    if (tiempo_entre_ataques <= 0) {
-        puede_atacar = true;
-    }
+// ==================================================
+// TEMPORIZADOR DE IMPACTO
+// ==================================================
+
+if (hit_flash_timer > 0) {
+    hit_flash_timer--;
 }
-///////////////////////////////////////////////////
+
+
+// ==================================================
+// RETROCESO POR GOLPES
+// ==================================================
+
+if (abs(knockback_speed) > 0.1) {
+
+    x += knockback_speed;
+    knockback_speed *= 0.75;
+
+}
+else {
+
+    knockback_speed = 0;
+
+}
+
+
+// ==================================================
+// PERSECUCIÓN
+// ==================================================
+
 if (instance_exists(obj_player)) {
 
     var distancia = point_distance(
@@ -27,88 +54,81 @@ if (instance_exists(obj_player)) {
         image_xscale = -1;
     }
 
-    switch (estado) {
+    // No perseguir mientras recibe retroceso
+    if (knockback_speed == 0) {
 
-        // ESTADO 0: ESPERANDO
-        case 0:
+        switch (estado) {
 
-            if (distancia <= distancia_deteccion) {
+            // ESTADO 0: ESPERANDO
+            case 0:
 
-                estado = 1;
+                if (distancia <= distancia_deteccion) {
 
-                // Elegir el lado inicial
-                lado_objetivo = (obj_player.x > x) ? 1 : -1;
+                    estado = 1;
 
-                // Si ya está cerca, comenzar en pausa
-                if (distancia <= distancia_ataque) {
-                    estado = 2;
+                    lado_objetivo =
+                        (obj_player.x > x) ? 1 : -1;
+
+                    if (distancia <= distancia_ataque) {
+                        estado = 2;
+                    }
                 }
-            }
 
-        break;
-
-
-        // ESTADO 1: PERSIGUIENDO
-        case 1:
-
-            // Comprobar si alcanzó al jugador
-            // o si el jugador cruzó al otro lado
-            if (
-                distancia <= distancia_ataque ||
-                (obj_player.x - x) * lado_objetivo <= 0
-            ) {
-
-                estado = 2;
-
-            }
-            else {
-
-                // Mantener el lado elegido
-                var objetivo_x = obj_player.x -
-                    (lado_objetivo * distancia_ataque);
-
-                var objetivo_y = obj_player.y;
-
-                var direccion = point_direction(
-                    x, y,
-                    objetivo_x, objetivo_y
-                );
-
-                var distancia_objetivo = point_distance(
-                    x, y,
-                    objetivo_x, objetivo_y
-                );
-
-                var avance = min(
-                    velocidad,
-                    distancia_objetivo
-                );
-
-                x += lengthdir_x(avance, direccion);
-                y += lengthdir_y(avance, direccion);
-            }
-
-        break;
+            break;
 
 
-        // ESTADO 2: EN PAUSA
-        case 2:
+            // ESTADO 1: PERSIGUIENDO
+            case 1:
 
-            // No mover la avispa mientras el jugador
-            // permanezca cerca.
+                if (
+                    distancia <= distancia_ataque ||
+                    (obj_player.x - x) * lado_objetivo <= 0
+                ) {
 
-            if (distancia >= distancia_reanudacion) {
+                    estado = 2;
 
-                estado = 1;
+                }
+                else {
 
-                // Elegir el lado desde la posición actual
-                lado_objetivo = (obj_player.x > x) ? 1 : -1;
-            }
+                    var objetivo_x = obj_player.x -
+                        (lado_objetivo * distancia_ataque);
 
-        break;
+                    var objetivo_y = obj_player.y;
+
+                    var direccion = point_direction(
+                        x, y,
+                        objetivo_x, objetivo_y
+                    );
+
+                    var distancia_objetivo = point_distance(
+                        x, y,
+                        objetivo_x, objetivo_y
+                    );
+
+                    var avance = min(
+                        velocidad,
+                        distancia_objetivo
+                    );
+
+                    x += lengthdir_x(avance, direccion);
+                    y += lengthdir_y(avance, direccion);
+                }
+
+            break;
+
+
+            // ESTADO 2: EN PAUSA
+            case 2:
+
+                if (distancia >= distancia_reanudacion) {
+
+                    estado = 1;
+
+                    lado_objetivo =
+                        (obj_player.x > x) ? 1 : -1;
+                }
+
+            break;
+        }
     }
-}
-if (vida <= 0 && !muerta) {
-    muerta = true;
-    instance_destroy();
 }
